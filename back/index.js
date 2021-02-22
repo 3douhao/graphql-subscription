@@ -19,9 +19,16 @@ const authors = [
   }
 ]
 
-const subscribers = []
+const messages = []
+
+const messagesSubscribers = []
+const authorsSubscribers = []
 
 const typeDefs = gql`
+  type Message {
+    user: String!
+    content: String!
+  }
   type Book {
     id: Int!
     title: String!
@@ -34,34 +41,55 @@ const typeDefs = gql`
   type Query {
     books: [Book]
     authors: [Author]
+    messages: [Message]
   }
   type Mutation {
     addAuthor(id: Int!, name: String!): Author!
+    postMessage(user: String!, content: String!): Message
   }
   type Subscription {
     authorAdded: Author
+    messagePosted: Message
   }
 `
 
 const resolvers = {
   Query: {
     books: () => books,
-    authors: () => authors
+    authors: () => authors,
+    messages: () => messages
   },
   Mutation: {
+    postMessage: (_, { user, content }) => {
+      const message = { user, content }
+      messages.push(message)
+      messagesSubscribers.forEach(fn => fn(message))
+      return message
+    },
     addAuthor: (_, { id, name }) => {
       authors.push({ id, name })
-      subscribers.forEach(fn => fn({ id, name }))
+      authorsSubscribers.forEach(fn => fn({ id, name }))
       return { id, name }
     }
   },
   Subscription: {
+    messagePosted: {
+      subscribe: () => {
+        const channel = Math.random()
+          .toString(36)
+          .slice(2, 15)
+        messagesSubscribers.push(payload =>
+          pubsub.publish(channel, { messagePosted: payload })
+        )
+        return pubsub.asyncIterator(channel)
+      }
+    },
     authorAdded: {
       subscribe: () => {
         const channel = Math.random()
           .toString(36)
           .slice(2, 15)
-        subscribers.push(payload =>
+        authorsSubscribers.push(payload =>
           pubsub.publish(channel, { authorAdded: payload })
         )
         return pubsub.asyncIterator(channel)
