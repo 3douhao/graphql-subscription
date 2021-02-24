@@ -123598,13 +123598,13 @@ var QUERY = (0, _client.gql)(_templateObject2 || (_templateObject2 = _taggedTemp
 var SUBSCRIPTION_QUERY = (0, _client.gql)(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n  subscription {\n    messagePosted {\n      user\n      content\n    }\n  }\n"])));
 
 var Messages = function Messages() {
-  var _useQuery = (0, _client.useQuery)(QUERY, {
-    pollInterval: 500
-  }),
-      data = _useQuery.data; // const { data } = useSubscription(SUBSCRIPTION_QUERY)
-  // console.log(data)
+  // const { data } = useQuery(QUERY, {
+  //   pollInterval: 500
+  // })
+  var _useSubscription = (0, _client.useSubscription)(SUBSCRIPTION_QUERY),
+      data = _useSubscription.data;
 
-
+  console.log(data);
   return /*#__PURE__*/_react.default.createElement(_react2.Flex, {
     p: "20px",
     direction: "column",
@@ -123612,28 +123612,26 @@ var Messages = function Messages() {
     mx: "auto",
     my: "50px",
     border: "solid pink 2px"
-  }, data && data.messages.slice(-3).map(function (message) {
-    return /*#__PURE__*/_react.default.createElement(_react2.Flex, {
-      key: (0, _uuid.v4)(),
-      my: "10px",
-      align: "center",
-      style: {
-        alignSelf: message.user === 'jack' ? 'flex-end' : 'flex-start',
-        flexDirection: message.user === 'jack' ? 'row-reverse' : 'row'
-      }
-    }, /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_react2.Avatar, {
-      name: message.user,
-      mx: "10px"
-    }), /*#__PURE__*/_react.default.createElement("p", {
-      style: {
-        background: message.user !== 'jack' ? 'gray' : 'lightgreen',
-        color: message.user !== 'jack' ? 'white' : 'black',
-        borderRadius: '10px',
-        paddingLeft: '10px',
-        paddingRight: '10px'
-      }
-    }, message.content)));
-  }));
+  }, data && /*#__PURE__*/_react.default.createElement(_react2.Flex, {
+    key: (0, _uuid.v4)(),
+    my: "10px",
+    align: "center",
+    style: {
+      alignSelf: data.messagePosted.user === 'jack' ? 'flex-end' : 'flex-start',
+      flexDirection: data.messagePosted.user === 'jack' ? 'row-reverse' : 'row'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_react2.Avatar, {
+    name: data.messagePosted.user,
+    mx: "10px"
+  }), /*#__PURE__*/_react.default.createElement("p", {
+    style: {
+      background: data.messagePosted.user !== 'jack' ? 'gray' : 'lightgreen',
+      color: data.messagePosted.user !== 'jack' ? 'white' : 'black',
+      borderRadius: '10px',
+      paddingLeft: '10px',
+      paddingRight: '10px'
+    }
+  }, data.messagePosted.content))));
 };
 
 var _default = Messages;
