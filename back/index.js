@@ -101,7 +101,6 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  // context: { pubsub }
   subscriptions: {
     path: '/subscriptions'
   }
