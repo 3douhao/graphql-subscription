@@ -38,9 +38,8 @@ const SUBSCRIPTION_QUERY = gql`
 `
 
 const Messages = () => {
-  // const { data } = useQuery(QUERY, {
-  //   pollInterval: 500
-  // })
+  // const { data } = useQuery(QUERY)
+
   const { data } = useSubscription(SUBSCRIPTION_QUERY)
   console.log(data)
 
@@ -53,35 +52,33 @@ const Messages = () => {
       my='50px'
       border='solid pink 2px'
     >
-      {data && (
-        <Flex
-          key={uuidv4()}
-          my='10px'
-          align='center'
-          style={{
-            alignSelf:
-              data.messagePosted.user === 'jack' ? 'flex-end' : 'flex-start',
-            flexDirection:
-              data.messagePosted.user === 'jack' ? 'row-reverse' : 'row'
-          }}
-        >
-          <>
-            <Avatar name={data.messagePosted.user} mx='10px' />
-            <p
-              style={{
-                background:
-                  data.messagePosted.user !== 'jack' ? 'gray' : 'lightgreen',
-                color: data.messagePosted.user !== 'jack' ? 'white' : 'black',
-                borderRadius: '10px',
-                paddingLeft: '10px',
-                paddingRight: '10px'
-              }}
-            >
-              {data.messagePosted.content}
-            </p>
-          </>
-        </Flex>
-      )}
+      {data &&
+        data.messagePosted.map(message => (
+          <Flex
+            key={uuidv4()}
+            my='10px'
+            align='center'
+            style={{
+              alignSelf: message.user === 'jack' ? 'flex-end' : 'flex-start',
+              flexDirection: message.user === 'jack' ? 'row-reverse' : 'row'
+            }}
+          >
+            <>
+              <Avatar name={message.user} mx='10px' />
+              <p
+                style={{
+                  background: message.user !== 'jack' ? 'gray' : 'lightgreen',
+                  color: message.user !== 'jack' ? 'white' : 'black',
+                  borderRadius: '10px',
+                  paddingLeft: '10px',
+                  paddingRight: '10px'
+                }}
+              >
+                {message.content}
+              </p>
+            </>
+          </Flex>
+        ))}
     </Flex>
   )
 }

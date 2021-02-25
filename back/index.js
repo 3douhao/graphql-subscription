@@ -49,7 +49,7 @@ const typeDefs = gql`
   }
   type Subscription {
     authorAdded: Author
-    messagePosted: Message
+    messagePosted: [Message!]
   }
 `
 
@@ -63,7 +63,7 @@ const resolvers = {
     postMessage: (_, { user, content }) => {
       const message = { user, content }
       messages.push(message)
-      messagesSubscribers.forEach(fn => fn(message))
+      messagesSubscribers.forEach(fn => fn(messages))
       return message
     },
     addAuthor: (_, { id, name }) => {
